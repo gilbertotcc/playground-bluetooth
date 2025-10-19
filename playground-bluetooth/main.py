@@ -11,6 +11,7 @@ async def main():
         cb={ "use_bdaddr": True } # On macOS, use Bluetooth address instead of UUID
     )
     for device_uuid, ble_device_with_advertisement_data in devices.items():
+        print(f"{device_uuid}")
         bluetooth_device = BluetoothDevice.bluetooth_device_from(ble_device_with_advertisement_data[0],
                                                                  ble_device_with_advertisement_data[1])
         print(bluetooth_device)

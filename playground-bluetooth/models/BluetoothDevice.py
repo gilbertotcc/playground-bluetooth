@@ -4,9 +4,9 @@ import json
 from bleak import BLEDevice, AdvertisementData
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class BluetoothDevice:
-    name: str
+    name: str | None
     address: str
     local_name: str | None = None
 
@@ -16,5 +16,5 @@ class BluetoothDevice:
                                address=ble_device.address,
                                local_name=advertisement_data.local_name)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return json.dumps(dataclasses.asdict(self))

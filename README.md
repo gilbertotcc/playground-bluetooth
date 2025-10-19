@@ -5,8 +5,22 @@ discovering and connecting to Bluetooth devices.
 
 ## Setup
 
-This project uses [uv](https://docs.astral.sh/uv/) as a package manager; install
-it to work on the code.
+This project uses [uv](https://docs.astral.sh/uv/) as a package manager to
+streamline virtual environment setup, package management, and code development.
+
+To install the required packages, run the following command:
+
+```sh
+uv sync
+```
+
+To add new dependencies, use the following command:
+
+```sh
+uv add <PACKAGE>
+```
+
+If a dependency is needed only for development, include the `--dev` argument.
 
 ## Run
 
