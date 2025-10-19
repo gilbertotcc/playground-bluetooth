@@ -1,0 +1,31 @@
+{
+  "general": {
+    "checkpointing": {
+      "enabled": true
+    }
+  },
+  "context": {
+    "fileName": "AGENTS.md"
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "ui": {
+    "theme": "Default"
+  },
+  "ignore": [
+    ".git/**",
+    ".github/**"
+  ],
+  "mcpServers": {
+    "github": {
+      "httpUrl": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_PAT}"
+      },
+      "timeout": 5000
+    }
+  }
+}
