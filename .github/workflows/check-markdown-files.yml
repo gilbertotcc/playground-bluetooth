@@ -5,12 +5,16 @@ on:
     paths:
     - '**.md'
     - '.github/workflows/check-markdown-files.yml'
+    - '.lycheeignore'
+    - 'lychee.toml'
   push:
     branches:
     - 'main'
     paths:
     - '**.md'
     - '.github/workflows/check-markdown-files.yml'
+    - '.lycheeignore'
+    - 'lychee.toml'
 
 jobs:
   lint-markdown:
