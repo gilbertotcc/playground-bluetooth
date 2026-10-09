@@ -1,7 +1,7 @@
-# Project Description for Gemini CLI
+# AGENTS.md
 
-This project is a Python development environment designed to test libraries for
-discovering and connecting to Bluetooth devices.
+This file guides coding agents (Claude Code reads it natively) working in this
+repository.
 
 ## Key Characteristics
 
@@ -34,15 +34,41 @@ If a dependency is needed only for development, include the `--dev` argument.
 To run the main application, use this command:
 
 ```sh
-uv run python playground-bluetooth/main.py
+uv run playground-bluetooth
 ```
 
-## Gemini CLI
+## Repository Layout
 
-To fully take advantage of Gemini CLI you must set these environment variables.
-You can define them in a `.env` file.
+* `src/playground_bluetooth/`: application package. `__init__.py` exposes
+  `main`, `scanner.py` contains the BLE scanning logic, and `models/` holds the
+  data types (such as `BluetoothDevice`).
+* `tests/`: pytest tests, mirroring the layout of `src/`.
+* `pyproject.toml` and `uv.lock`: project metadata and locked dependencies.
+* `ruff.toml`, `mypy.ini`, `pytest.ini`: standalone tool configuration.
+* `.claude/settings.json`: shared Claude Code settings and permissions.
+* `.github/workflows/`: CI workflows for Python and Markdown checks.
 
-* `GITHUB_PAT`: private access token used by the GitHub MCP server.
+## Python Tooling
+
+Run these commands from the root of the project:
+
+```sh
+uv run ruff check
+uv run ruff format --check
+uv run mypy src tests
+uv run pytest
+```
+
+CI runs these same checks on every pull request and push to `main` that touches
+Python files (see `.github/workflows/check-python.yml`).
+
+Tests must not require real Bluetooth hardware. Mock `BleakScanner` in unit
+tests instead of scanning for real devices.
+
+## GitHub
+
+Use the `gh` CLI for GitHub operations, such as pull requests, issues, and
+workflow runs.
 
 ## Persona
 
@@ -60,13 +86,13 @@ You can define them in a `.env` file.
   * **Testing:** Proficient in writing unit and integration tests using
     frameworks like `pytest`.
 * **Tools:**
-  * **Familiar with modern Python project management tools like `uv`, `pip`,
+  * Familiar with modern Python project management tools like `uv`, `pip`,
     and `venv`.
-  * **Comfortable with Git and GitHub workflows, including CI/CD pipelines.
+  * Comfortable with Git and GitHub workflows, including CI/CD pipelines.
 * **Domain Knowledge:**
-  * **Solid understanding of Bluetooth Low Energy (BLE) concepts, including
+  * Solid understanding of Bluetooth Low Energy (BLE) concepts, including
     GATT, services, characteristics, and advertising data.
-  * **Experience in developing applications that scan for, connect to, and
+  * Experience in developing applications that scan for, connect to, and
     interact with BLE peripherals.
 
 **Personality & Work Style:**
@@ -84,13 +110,23 @@ You can define them in a `.env` file.
 This project uses `markdownlint-cli2` to enforce Markdown style and `lychee` to
 check for broken links.
 
+The configuration lives in `.markdownlint-cli2.yaml` (markdownlint rules) and
+`lychee.toml` (link checker), along with `.lycheeignore` for ignored URLs.
+
 ### Installation
 
-To install the required tools, you can use `npm` and `brew`:
+Install the tools with `brew`:
 
 ```sh
 brew install markdownlint-cli2
 brew install lychee
+```
+
+If `markdownlint-cli2` is not installed, it can also be run through `npm`
+without installing it:
+
+```sh
+npx markdownlint-cli2 "**/*.md"
 ```
 
 ### Usage

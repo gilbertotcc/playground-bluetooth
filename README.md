@@ -27,15 +27,28 @@ If a dependency is needed only for development, include the `--dev` argument.
 To run the main application, use this command:
 
 ```sh
-uv run python playground-bluetooth/main.py
+uv run playground-bluetooth
 ```
 
-## Gemini CLI
+## Development
 
-To fully take advantage of Gemini CLI you must set these environment variables.
-You can define them in a `.env` file.
+Run these commands from the root of the project to lint, format-check, type
+check, and test the code:
 
-* `GITHUB_PAT`: private access token used by the GitHub MCP server.
+```sh
+uv run ruff check
+uv run ruff format --check
+uv run mypy src tests
+uv run pytest
+```
+
+## Claude Code
+
+This repository is set up for [Claude Code](https://claude.com/claude-code).
+Its behavior is configured through `AGENTS.md` and `.claude/settings.json`,
+which pre-approves the project's lint, type, and test commands.
+
+GitHub operations use the `gh` CLI, so no environment variables are needed.
 
 ## References
 

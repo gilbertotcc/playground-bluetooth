@@ -1,7 +1,3 @@
 extensions = ["md"]
 
 exclude_loopback = true
-
-exclude_path = [
-  ".gemini/**/*.md"
-]
