@@ -41,7 +41,12 @@ uv run playground-bluetooth
 
 * `src/playground_bluetooth/`: application package. `__init__.py` exposes
   `main`, `scanner.py` contains the BLE scanning logic, and `models/` holds the
-  data types (such as `BluetoothDevice`).
+  data types (such as `BluetoothDevice` and its enums).
+  * `advertisement.py`: pure decoders for advertisement data (address type,
+    known protocols, device category, fingerprint).
+  * `assigned_numbers/`: lookups in the Bluetooth SIG assigned numbers. The
+    YAML files in `data/` are vendored unchanged from the Bluetooth SIG
+    repository.
 * `tests/`: pytest tests, mirroring the layout of `src/`.
 * `pyproject.toml` and `uv.lock`: project metadata and locked dependencies.
 * `ruff.toml`, `mypy.ini`, `pytest.ini`: standalone tool configuration.
