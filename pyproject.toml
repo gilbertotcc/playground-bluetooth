@@ -1,8 +1,27 @@
 [project]
 name = "playground-bluetooth"
 version = "0.1.0"
+description = "A playground to test libraries for discovering and connecting to Bluetooth devices."
 readme = "README.md"
+authors = [
+    { name = "Gilberto Taccari", email = "gilberto.taccari@gmail.com" }
+]
 requires-python = ">=3.14"
 dependencies = [
     "bleak>=3.0.2",
+]
+
+[project.scripts]
+playground-bluetooth = "playground_bluetooth:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.17.0",
 ]
