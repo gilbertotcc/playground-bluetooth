@@ -3,31 +3,37 @@ name: Check Markdown files
 on:
   pull_request:
     paths:
-    - '**.md'
-    - '.github/workflows/check-markdown-files.yml'
-    - '.lycheeignore'
-    - 'lychee.toml'
+      - '**.md'
+      - '.markdownlint-cli2.yaml'
+      - '.lycheeignore'
+      - 'lychee.toml'
+      - '.github/workflows/check-markdown-files.yml'
   push:
     branches:
-    - 'main'
+      - 'main'
     paths:
-    - '**.md'
-    - '.github/workflows/check-markdown-files.yml'
-    - '.lycheeignore'
-    - 'lychee.toml'
+      - '**.md'
+      - '.markdownlint-cli2.yaml'
+      - '.lycheeignore'
+      - 'lychee.toml'
+      - '.github/workflows/check-markdown-files.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-markdown:
     name: Lint Markdown
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-    - name: Run markdownlint-cli2
-      uses: DavidAnson/markdownlint-cli2-action@v24
-      with:
-        globs: |
-          **/*.md
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Run markdownlint-cli2
+        uses: DavidAnson/markdownlint-cli2-action@v24
 
   check-links:
     name: Check links
@@ -38,4 +44,5 @@ jobs:
       - name: Link Checker
         uses: lycheeverse/lychee-action@v2.9.0
         with:
+          args: --no-progress --timeout 30 './**/*.md'
           fail: true
