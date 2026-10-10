@@ -1,7 +1,6 @@
 import pytest
 
-from playground_bluetooth import advertisement
-from playground_bluetooth.models import AddressType, DeviceCategory
+from playground_bluetooth.models import AddressType, DeviceCategory, advertisement
 
 
 HEART_RATE = "0000180d-0000-1000-8000-00805f9b34fb"

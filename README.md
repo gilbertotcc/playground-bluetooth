@@ -38,9 +38,50 @@ check, and test the code:
 ```sh
 uv run ruff check
 uv run ruff format --check
-uv run mypy src tests
+uv run mypy src tests scripts
 uv run pytest
 ```
+
+### Architecture
+
+The code is layered so that the application does not depend on the Bluetooth
+library it uses:
+
+* `playground_bluetooth.models` is the domain: the `BluetoothDevice` model and
+  the pure decoders of advertisement data. It depends only on the standard
+  library.
+* `playground_bluetooth.infrastructure` holds everything tied to an external
+  library or data source: scanning with bleak, mapping bleak types to the
+  models, and loading the Bluetooth SIG assigned numbers from YAML.
+
+Ruff bans `bleak` and `yaml` imports outside `infrastructure`, and a test checks
+that `models` never imports `infrastructure`.
+
+### Updating the Bluetooth SIG assigned numbers
+
+Company, service UUID, and appearance names come from YAML files copied
+unchanged from the [Bluetooth SIG – Assigned Numbers YAML repository](https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/)
+into `src/playground_bluetooth/infrastructure/assigned_numbers/data`.
+
+To check whether the vendored files are outdated, without changing them, run:
+
+```sh
+uv run scripts/update_assigned_numbers.py --check
+```
+
+The `Check Bluetooth SIG assigned numbers` workflow runs this check every week.
+
+To update the files, run the script without `--check`. Use `--ref` to download
+a specific branch, tag, or commit instead of `main`:
+
+```sh
+uv run scripts/update_assigned_numbers.py
+uv run scripts/update_assigned_numbers.py --ref <COMMIT>
+```
+
+The script validates every download before writing, and writes nothing if any
+download fails. Review the changes with `git diff`, run `uv run pytest`, and
+commit the updated files.
 
 ## Claude Code
 

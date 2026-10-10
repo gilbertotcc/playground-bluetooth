@@ -5,9 +5,7 @@ import pytest
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 
-import playground_bluetooth
-from playground_bluetooth import scanner
-from playground_bluetooth.models import BluetoothDevice
+from playground_bluetooth.infrastructure import bleak_scanner
 
 
 if TYPE_CHECKING:
@@ -69,12 +67,12 @@ class FakeBleakScanner:
 @pytest.fixture
 def fake_scanner(monkeypatch: pytest.MonkeyPatch) -> type[FakeBleakScanner]:
     FakeBleakScanner.instances = []
-    monkeypatch.setattr(scanner, "BleakScanner", FakeBleakScanner)
+    monkeypatch.setattr(bleak_scanner, "BleakScanner", FakeBleakScanner)
     return FakeBleakScanner
 
 
 async def test_scan_aggregates_advertisements_per_device(fake_scanner: type[FakeBleakScanner]) -> None:
-    devices = {device.address: device for device in await scanner.scan(timeout=0)}
+    devices = {device.address: device for device in await bleak_scanner.scan(timeout=0)}
 
     one = devices["AA:AA:AA:AA:AA:01"]
     assert one.name == "One"
@@ -84,9 +82,8 @@ async def test_scan_aggregates_advertisements_per_device(fake_scanner: type[Fake
     assert one.manufacturer_data == {0x004C: b"\x10\x00"}
     assert one.service_uuids == (HEART_RATE,)
     assert one.tx_power == 4
-    assert one.first_seen is not None
-    assert one.last_seen is not None
-    assert one.first_seen <= one.last_seen
+    assert one.manufacturers == ("Apple, Inc.",)
+    assert one.services == ("Heart Rate",)
 
     two = devices["AA:AA:AA:AA:AA:02"]
     assert two.rssi_samples == (-70,)
@@ -94,22 +91,6 @@ async def test_scan_aggregates_advertisements_per_device(fake_scanner: type[Fake
 
 
 async def test_scan_uses_bdaddr_on_macos(fake_scanner: type[FakeBleakScanner]) -> None:
-    await scanner.scan(timeout=0)
+    await bleak_scanner.scan(timeout=0)
 
     assert [instance.kwargs for instance in fake_scanner.instances] == [{"cb": {"use_bdaddr": True}}]
-
-
-def test_main_prints_one_line_per_device(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
-    expected = [
-        BluetoothDevice(address="AA:AA:AA:AA:AA:01", name="One", rssi_samples=(-40,)),
-        BluetoothDevice(address="AA:AA:AA:AA:AA:02", name="Two", rssi_samples=(-70,)),
-    ]
-
-    async def fake_scan() -> list[BluetoothDevice]:
-        return expected
-
-    monkeypatch.setattr(playground_bluetooth, "scan", fake_scan)
-
-    playground_bluetooth.main()
-
-    assert capsys.readouterr().out.splitlines() == [str(d) for d in expected]
