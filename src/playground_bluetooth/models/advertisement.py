@@ -4,7 +4,7 @@ import hashlib
 import re
 from typing import TYPE_CHECKING
 
-from playground_bluetooth.assigned_numbers import short_uuid
+from playground_bluetooth.models.assigned_numbers import short_uuid
 from playground_bluetooth.models.enums import AddressType, DeviceCategory
 
 

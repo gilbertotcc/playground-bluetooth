@@ -1,6 +1,6 @@
 import asyncio
 
-from playground_bluetooth.scanner import scan
+from playground_bluetooth.infrastructure import scan
 
 
 async def _run() -> None:

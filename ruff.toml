@@ -18,13 +18,22 @@ select = [
     "S", # bandit
     "FBT", # boolean-trap
     "TCH", # typing-only imports
+    "TID", # tidy imports (layering, see banned-api)
     "FURB", # refurb
 ]
 
 [lint.isort]
 lines-after-imports = 2
 
+[lint.flake8-tidy-imports.banned-api]
+# Keep the implementation libraries out of the domain: only `playground_bluetooth.infrastructure` may use them.
+"bleak".msg = "Use bleak only in playground_bluetooth.infrastructure"
+"yaml".msg = "Use yaml only in playground_bluetooth.infrastructure"
+
 [lint.per-file-ignores]
+"src/playground_bluetooth/infrastructure/**/*" = ["TID251"]
+"tests/infrastructure/**/*" = ["TID251"]
+"scripts/**/*" = ["TID251"]
 "tests/**/*" = [
     "S101", # allow `assert` in tests
     "S108", # allow hardcoded temp paths in tests

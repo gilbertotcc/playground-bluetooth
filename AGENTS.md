@@ -39,14 +39,23 @@ uv run playground-bluetooth
 
 ## Repository Layout
 
-* `src/playground_bluetooth/`: application package. `__init__.py` exposes
-  `main`, `scanner.py` contains the BLE scanning logic, and `models/` holds the
-  data types (such as `BluetoothDevice` and its enums).
-  * `advertisement.py`: pure decoders for advertisement data (address type,
-    known protocols, device category, fingerprint).
-  * `assigned_numbers/`: lookups in the Bluetooth SIG assigned numbers. The
-    YAML files in `data/` are vendored unchanged from the Bluetooth SIG
-    repository.
+* `src/playground_bluetooth/`: application package, layered so that the
+  domain doesn't depend on the Bluetooth library. `__init__.py` exposes `main`.
+  * `models/`: the domain. It depends only on the standard library and MUST NOT
+    import `bleak`, `yaml`, or `infrastructure`.
+    * `bluetooth_device.py` and `enums.py`: the data types, such as
+      `BluetoothDevice` and its enums.
+    * `advertisement.py`: pure decoders for advertisement data (address type,
+      known protocols, device category, fingerprint).
+    * `assigned_numbers.py`: `AssignedNumbers`, lookups in the Bluetooth SIG
+      assigned numbers.
+  * `infrastructure/`: the only package allowed to import `bleak` and `yaml`.
+    * `bleak_scanner.py`: the BLE scan (`scan()`).
+    * `bleak_mapper.py`: maps bleak types to the models.
+    * `assigned_numbers/`: loads `AssignedNumbers` from the YAML files in
+      `data/`, vendored unchanged from the Bluetooth SIG repository.
+* `scripts/`: maintenance scripts run with `uv run`, such as
+  `update_assigned_numbers.py`, which refreshes the vendored assigned numbers.
 * `tests/`: pytest tests, mirroring the layout of `src/`.
 * `pyproject.toml` and `uv.lock`: project metadata and locked dependencies.
 * `ruff.toml`, `mypy.ini`, `pytest.ini`: standalone tool configuration.
@@ -60,7 +69,7 @@ Run these commands from the root of the project:
 ```sh
 uv run ruff check
 uv run ruff format --check
-uv run mypy src tests
+uv run mypy src tests scripts
 uv run pytest
 ```
 
