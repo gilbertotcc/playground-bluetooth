@@ -72,7 +72,7 @@ def fake_scanner(monkeypatch: pytest.MonkeyPatch) -> type[FakeBleakScanner]:
 
 
 async def test_scan_aggregates_advertisements_per_device(fake_scanner: type[FakeBleakScanner]) -> None:
-    devices = {device.address: device for device in await bleak_scanner.scan(timeout=0)}
+    devices = {device.address: device for device in await bleak_scanner.BleakDeviceScanner().scan(timeout=0)}
 
     one = devices["AA:AA:AA:AA:AA:01"]
     assert one.name == "One"
@@ -91,6 +91,6 @@ async def test_scan_aggregates_advertisements_per_device(fake_scanner: type[Fake
 
 
 async def test_scan_uses_bdaddr_on_macos(fake_scanner: type[FakeBleakScanner]) -> None:
-    await bleak_scanner.scan(timeout=0)
+    await bleak_scanner.BleakDeviceScanner().scan(timeout=0)
 
     assert [instance.kwargs for instance in fake_scanner.instances] == [{"cb": {"use_bdaddr": True}}]

@@ -50,7 +50,9 @@ uv run playground-bluetooth
     * `assigned_numbers.py`: `AssignedNumbers`, lookups in the Bluetooth SIG
       assigned numbers.
   * `infrastructure/`: the only package allowed to import `bleak` and `yaml`.
-    * `bleak_scanner.py`: the BLE scan (`scan()`).
+    * `scanner.py`: `Scanner`, the abstract BLE scanner the application uses.
+    * `bleak_scanner.py`: `BleakDeviceScanner`, the bleak implementation of
+      `Scanner`.
     * `bleak_mapper.py`: maps bleak types to the models.
     * `assigned_numbers/`: loads `AssignedNumbers` from the YAML files in
       `data/`, vendored unchanged from the Bluetooth SIG repository.
