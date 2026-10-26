@@ -1,5 +1,35 @@
 company_identifiers:
 
+  - value: 0x113A
+    name: 'Celadon, Inc.'
+
+  - value: 0x1139
+    name: 'NaturalCycles Nordic AB'
+
+  - value: 0x1138
+    name: 'Crane Aerospace & Electronics'
+
+  - value: 0x1137
+    name: 'Eberlein Innovations EOOD'
+
+  - value: 0x1136
+    name: 'Loop'
+
+  - value: 0x1135
+    name: 'Shenzhen GetD Technology Co.,Ltd.'
+
+  - value: 0x1134
+    name: 'Barksdale, Inc.'
+
+  - value: 0x1133
+    name: 'THE KEEON Co., Ltd.'
+
+  - value: 0x1132
+    name: 'Nicrew Technology Co., Limited'
+
+  - value: 0x1131
+    name: 'Chirp Innovation, LLC'
+
   - value: 0x1130
     name: 'Pi Variables, Inc.'
 
@@ -10,7 +40,7 @@ company_identifiers:
     name: 'Oticon Medical AB'
 
   - value: 0x112D
-    name: 'Aktiia S.A.'
+    name: 'Aktiia SA'
 
   - value: 0x112C
     name: 'mees audio technology., co.ltd.'
