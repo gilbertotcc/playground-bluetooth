@@ -1,5 +1,14 @@
 company_identifiers:
 
+  - value: 0x113D
+    name: 'Venndelta Pty Ltd'
+
+  - value: 0x113C
+    name: 'SOTI INC.'
+
+  - value: 0x113B
+    name: 'ONiO AS'
+
   - value: 0x113A
     name: 'Celadon, Inc.'
 
