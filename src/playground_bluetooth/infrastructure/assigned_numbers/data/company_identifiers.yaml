@@ -1,5 +1,20 @@
 company_identifiers:
 
+  - value: 0x1142
+    name: 'Eight Sleep Inc.'
+
+  - value: 0x1141
+    name: 'AXsensor AB (publ)'
+
+  - value: 0x1140
+    name: 'WEGZWEI GmbH'
+
+  - value: 0x113F
+    name: 'Dreamarea Inc.'
+
+  - value: 0x113E
+    name: 'Westinghouse Air Brake Technologies Corporation'
+
   - value: 0x113D
     name: 'Venndelta Pty Ltd'
 
@@ -31,7 +46,7 @@ company_identifiers:
     name: 'Barksdale, Inc.'
 
   - value: 0x1133
-    name: 'THE KEEON Co., Ltd.'
+    name: 'THEKEEON Co., Ltd.'
 
   - value: 0x1132
     name: 'Nicrew Technology Co., Limited'
