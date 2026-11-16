@@ -1484,3 +1484,5 @@ uuids:
    name: PreStartGo Pty Ltd
  - uuid: 0xFC1F
    name: Eight Sleep Inc.
+ - uuid: 0xFC1E
+   name: Atomis Inc.
