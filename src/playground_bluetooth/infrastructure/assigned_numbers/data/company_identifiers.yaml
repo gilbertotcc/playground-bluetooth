@@ -1,5 +1,35 @@
 company_identifiers:
 
+  - value: 0x114C
+    name: 'Acin Instrumenten B.V.'
+
+  - value: 0x114B
+    name: 'Triciti Coverage LLC'
+
+  - value: 0x114A
+    name: 'ASIMUT SOFTWARE ApS'
+
+  - value: 0x1149
+    name: 'ITOKI CORPORATION'
+
+  - value: 0x1148
+    name: 'Revelyst, Inc.'
+
+  - value: 0x1147
+    name: 'NESTLE PURINA PETCARE COMPANY'
+
+  - value: 0x1146
+    name: 'Murray Blair Pty Ltd'
+
+  - value: 0x1145
+    name: 'Hon Hai Precision Ind. Co., Ltd.'
+
+  - value: 0x1144
+    name: 'GENXUNITED HOLDINGS INC.'
+
+  - value: 0x1143
+    name: 'Shenzhen HJT Electronics Co., Ltd.'
+
   - value: 0x1142
     name: 'Eight Sleep Inc.'
 
