@@ -1,5 +1,4 @@
 import dataclasses
-import json
 import types
 
 import pytest
@@ -50,7 +49,7 @@ def test_signal_is_unknown_without_samples() -> None:
     assert device.rssi_median is None
 
 
-def test_str_is_json() -> None:
+def test_to_dict_is_json_serializable() -> None:
     device = BluetoothDevice(
         address="AA:BB:CC:DD:EE:FF",
         manufacturer_data={0x004C: b"\x10\x00"},
@@ -60,7 +59,7 @@ def test_str_is_json() -> None:
         services=("Heart Rate",),
     )
 
-    data = json.loads(str(device))
+    data = device.to_dict()
 
     assert data["address"] == "AA:BB:CC:DD:EE:FF"
     assert data["address_type"] == "UNKNOWN"

@@ -4,8 +4,9 @@ from typing import TYPE_CHECKING, Any, ClassVar, Self
 import pytest
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
+from bleak.exc import BleakError
 
-from playground_bluetooth.infrastructure import bleak_scanner
+from playground_bluetooth.infrastructure import ScannerError, bleak_scanner
 
 
 if TYPE_CHECKING:
@@ -94,3 +95,16 @@ async def test_scan_uses_bdaddr_on_macos(fake_scanner: type[FakeBleakScanner]) -
     await bleak_scanner.BleakDeviceScanner().scan(timeout=0)
 
     assert [instance.kwargs for instance in fake_scanner.instances] == [{"cb": {"use_bdaddr": True}}]
+
+
+async def test_scan_wraps_bleak_errors(monkeypatch: pytest.MonkeyPatch) -> None:
+    class FailingScanner(FakeBleakScanner):
+        async def __aenter__(self) -> Self:
+            raise BleakError("Bluetooth device is turned off")
+
+    monkeypatch.setattr(bleak_scanner, "BleakScanner", FailingScanner)
+
+    with pytest.raises(ScannerError, match="turned off") as excinfo:
+        await bleak_scanner.BleakDeviceScanner().scan(timeout=0)
+
+    assert isinstance(excinfo.value.__cause__, BleakError)

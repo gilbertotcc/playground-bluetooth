@@ -1,5 +1,4 @@
 import dataclasses
-import json
 import statistics
 from typing import TYPE_CHECKING, Any
 
@@ -109,6 +108,3 @@ class BluetoothDevice:
             "manufacturer_data": {f"0x{cid:04X}": data.hex() for cid, data in self.manufacturer_data.items()},
             "service_data": {uuid: data.hex() for uuid, data in self.service_data.items()},
         }
-
-    def __str__(self) -> str:
-        return json.dumps(self.to_dict())

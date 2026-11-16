@@ -1,15 +1,9 @@
-import asyncio
-
-from playground_bluetooth.infrastructure import BleakDeviceScanner, Scanner
-
-
-async def _run(scanner: Scanner) -> None:
-    for device in await scanner.scan():
-        print(device)
+from playground_bluetooth.cli import scan
+from playground_bluetooth.infrastructure import BleakDeviceScanner
 
 
 def main() -> None:
-    asyncio.run(_run(BleakDeviceScanner()))
+    scan.main(obj=BleakDeviceScanner)
 
 
 __all__ = ["main"]

@@ -4,11 +4,21 @@
 # ///
 """Update the vendored Bluetooth SIG assigned numbers.
 
-Usage: uv run scripts/update_assigned_numbers.py [--ref main] [--check]
+Examples:
+    uv run scripts/update_assigned_numbers.py --check
+    uv run scripts/update_assigned_numbers.py
+    uv run scripts/update_assigned_numbers.py --ref <COMMIT>
 
 Downloads the YAML files from the Bluetooth SIG repository and rewrites the
-vendored copies when they differ. With --check nothing is written and the exit
-code is 1 if any file is outdated.
+vendored copies when they differ. With --check nothing is written. Files are
+written only after every download has been fetched and validated.
+
+Exit codes:
+    0    up to date, or updated
+    1    outdated (with --check)
+    2    usage error
+    3    fetch or validation failure
+    130  interrupted (Ctrl-C)
 """
 
 import argparse
@@ -26,6 +36,9 @@ BASE_URL = "https://bitbucket.org/bluetooth-SIG/public/raw/{ref}/assigned_number
 DEFAULT_DATA_DIR = (
     Path(__file__).resolve().parent.parent / "src/playground_bluetooth/infrastructure/assigned_numbers/data"
 )
+EXIT_OUTDATED = 1
+EXIT_FETCH_ERROR = 3
+EXIT_INTERRUPTED = 130
 TIMEOUT_SECONDS = 30
 USER_AGENT = "playground-bluetooth-assigned-numbers-updater"
 
@@ -84,21 +97,23 @@ def write_atomically(path: Path, content: bytes) -> None:
 
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("--ref", default="main", help="upstream branch, tag or commit (default: main)")
     parser.add_argument("--check", action="store_true", help="do not write; exit 1 if any file is outdated")
-    parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR, help="directory holding the vendored files")
+    parser.add_argument(
+        "--data-dir",
+        type=Path,
+        default=DEFAULT_DATA_DIR,
+        help="directory of the vendored files (default: package data)",
+    )
     return parser.parse_args(argv)
 
 
-def main(argv: list[str] | None = None) -> int:
-    args = parse_args(argv)
-    try:
-        contents = fetch_all(args.ref)
-    except RuntimeError as error:
-        print(f"error: {error}", file=sys.stderr)
-        return 1
-
+def run(args: argparse.Namespace) -> int:
+    contents = fetch_all(args.ref)
     outdated = False
     for name, content in contents.items():
         path = args.data_dir / name
@@ -110,7 +125,19 @@ def main(argv: list[str] | None = None) -> int:
         else:
             write_atomically(path, content)
             print(f"{name}: updated")
-    return 1 if outdated else 0
+    return EXIT_OUTDATED if outdated else 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    try:
+        return run(args)
+    except KeyboardInterrupt:
+        print("Interrupted", file=sys.stderr)
+        return EXIT_INTERRUPTED
+    except RuntimeError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return EXIT_FETCH_ERROR
 
 
 if __name__ == "__main__":
