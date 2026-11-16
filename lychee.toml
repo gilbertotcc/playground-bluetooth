@@ -1,3 +1,7 @@
 extensions = ["md"]
 
 exclude_loopback = true
+
+# Skills vendored with skills.sh (see skills-lock.json); keep in sync.
+# Entries are regular expressions matched against the path, not globs.
+exclude_path = ['(^|/)\.claude/skills/cli-designer/', '(^|/)\.claude/skills/markdown-editor/']

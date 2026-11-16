@@ -7,7 +7,8 @@
       "Bash(uv run mypy *)",
       "Bash(uv run pytest *)",
       "Bash(markdownlint-cli2 *)",
-      "Bash(lychee *)"
+      "Bash(lychee *)",
+      "Bash(bash .claude/skills/cli-designer/scripts/clig-sections.sh *)"
     ]
   }
 }

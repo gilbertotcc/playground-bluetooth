@@ -5,10 +5,11 @@ from bleak import BleakScanner
 from bleak.args.corebluetooth import CBScannerArgs
 from bleak.backends.device import BLEDevice  # noqa: TC002 - bleak calls inspect.signature() on the detection callback
 from bleak.backends.scanner import AdvertisementData  # noqa: TC002 - same as above
+from bleak.exc import BleakBluetoothNotAvailableError, BleakError
 
 from playground_bluetooth.infrastructure.assigned_numbers import load_assigned_numbers
 from playground_bluetooth.infrastructure.bleak_mapper import Observation
-from playground_bluetooth.infrastructure.scanner import Scanner
+from playground_bluetooth.infrastructure.scanner import Scanner, ScannerError
 
 
 if TYPE_CHECKING:
@@ -28,11 +29,18 @@ class BleakDeviceScanner(Scanner):
             else:
                 observation.add(device, adv)
 
-        async with BleakScanner(
-            detection_callback=on_advertisement,
-            # On macOS, use the Bluetooth address instead of the CoreBluetooth UUID (ignored by other backends).
-            cb=CBScannerArgs(use_bdaddr=True),
-        ):
-            await asyncio.sleep(timeout)
+        try:
+            async with BleakScanner(
+                detection_callback=on_advertisement,
+                # On macOS, use the Bluetooth address instead of the CoreBluetooth UUID (ignored by other backends).
+                cb=CBScannerArgs(use_bdaddr=True),
+            ):
+                await asyncio.sleep(timeout)
+        except BleakBluetoothNotAvailableError as error:
+            raise ScannerError(
+                str(error) or type(error).__name__, hint="turn Bluetooth on and allow it for this terminal"
+            ) from error
+        except BleakError as error:
+            raise ScannerError(str(error) or type(error).__name__) from error
         numbers = load_assigned_numbers()
         return [observation.to_device(numbers) for observation in observations.values()]

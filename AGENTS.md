@@ -40,7 +40,8 @@ uv run playground-bluetooth
 ## Repository Layout
 
 * `src/playground_bluetooth/`: application package, layered so that the
-  domain doesn't depend on the Bluetooth library. `__init__.py` exposes `main`.
+  domain doesn't depend on the Bluetooth library. `__init__.py` exposes `main`,
+  which wires `BleakDeviceScanner` into the CLI.
   * `models/`: the domain. It depends only on the standard library and MUST NOT
     import `bleak`, `yaml`, or `infrastructure`.
     * `bluetooth_device.py` and `enums.py`: the data types, such as
@@ -50,18 +51,28 @@ uv run playground-bluetooth
     * `assigned_numbers.py`: `AssignedNumbers`, lookups in the Bluetooth SIG
       assigned numbers.
   * `infrastructure/`: the only package allowed to import `bleak` and `yaml`.
-    * `scanner.py`: `Scanner`, the abstract BLE scanner the application uses.
+    * `scanner.py`: `Scanner`, the abstract BLE scanner the application uses,
+      and `ScannerError`, raised when a scan fails.
     * `bleak_scanner.py`: `BleakDeviceScanner`, the bleak implementation of
       `Scanner`.
     * `bleak_mapper.py`: maps bleak types to the models.
     * `assigned_numbers/`: loads `AssignedNumbers` from the YAML files in
       `data/`, vendored unchanged from the Bluetooth SIG repository.
+  * `cli/`: the Click command line, the only package allowed to import
+    `click`. It MUST NOT import `bleak`, `yaml`, or `BleakDeviceScanner`.
+    * `command.py`: the `scan` command, its options, stderr messages, and exit
+      codes. It gets a `Scanner` factory through the Click context `obj`.
+    * `formatting.py`: pure functions that format a device as a line of at
+      most 80 columns or as JSON.
 * `scripts/`: maintenance scripts run with `uv run`, such as
   `update_assigned_numbers.py`, which refreshes the vendored assigned numbers.
 * `tests/`: pytest tests, mirroring the layout of `src/`.
 * `pyproject.toml` and `uv.lock`: project metadata and locked dependencies.
 * `ruff.toml`, `mypy.ini`, `pytest.ini`: standalone tool configuration.
 * `.claude/settings.json`: shared Claude Code settings and permissions.
+* `.claude/skills/` and `skills-lock.json`: agent skills vendored with
+  skills.sh (`npx skills add`/`npx skills update`), not edited by hand. The lock
+  file records their source and commit.
 * `.github/workflows/`: CI workflows for Python and Markdown checks.
 
 ## Python Tooling
@@ -78,8 +89,22 @@ uv run pytest
 CI runs these same checks on every pull request and push to `main` that touches
 Python files (see `.github/workflows/check-python.yml`).
 
-Tests must not require real Bluetooth hardware. Mock `BleakScanner` in unit
-tests instead of scanning for real devices.
+Tests must not require real Bluetooth hardware. Mock `BleakScanner` in
+infrastructure tests, and test the CLIs with `click.testing.CliRunner` and a
+fake `Scanner` passed as `obj`.
+
+## Command-line interfaces
+
+Design and review CLIs with the `cli-designer` skill.
+
+Project rules, which take precedence over clig.dev:
+
+* Build Python CLIs and scripts with Click.
+* Default human output and `--help` fit in 80 columns.
+* No `--version` option.
+* Errors go to stderr.
+* Exit codes are 0 ok, 1 failure, 2 usage error, a distinct code for each
+  specific failure, and 130 on Ctrl-C.
 
 ## GitHub
 
@@ -121,48 +146,16 @@ workflow runs.
 * **Proactive:** Enjoys exploring new libraries and technologies to find the
   best tools for the job.
 
-## Markdown Style Guide
+## Markdown
 
-This project uses `markdownlint-cli2` to enforce Markdown style and `lychee` to
-check for broken links.
+Use the `markdown-editor` skill for every change to a project `.md` file. The
+configs are `.markdownlint-cli2.yaml`, `lychee.toml`, and `.lycheeignore`.
 
-The configuration lives in `.markdownlint-cli2.yaml` (markdownlint rules) and
-`lychee.toml` (link checker), along with `.lycheeignore` for ignored URLs.
+**Exception to the skill (project rule):** if `markdownlint-cli2` isn't
+installed, agents may run `npx --yes markdownlint-cli2` without asking.
 
-### Installation
-
-Install the tools with `brew`:
-
-```sh
-brew install markdownlint-cli2
-brew install lychee
-```
-
-If `markdownlint-cli2` is not installed, it can also be run through `npm`
-without installing it:
-
-```sh
-npx markdownlint-cli2 "**/*.md"
-```
-
-### Usage
-
-To check all Markdown files in the project, run the following commands from the
-root of the project:
-
-```sh
-markdownlint-cli2 "**/*.md"
-lychee "**/*.md"
-```
-
-### Updates
-
-When updating any Markdown file, it is required to run the style checker to
-ensure the changes are compliant with the project's style guide.
-
-To check a specific file, run the following commands:
-
-```sh
-markdownlint-cli2 <file_path>
-lychee <file_path>
-```
+The skills vendored with skills.sh are excluded from linting and link checks by
+name: `ignores` in `.markdownlint-cli2.yaml` and `exclude_path` in
+`lychee.toml`. When a skill is added or removed with `npx skills`, update both
+lists to match `skills-lock.json`. Skills written by hand in `.claude/skills/`
+are linted like any other Markdown.

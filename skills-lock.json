@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "skills": {
+    "cli-designer": {
+      "source": "gilbertotcc/agent-skills",
+      "commit": "e4a12482afdfe5fd7d2fcb47283ba49838417c0b",
+      "sourceType": "github",
+      "skillPath": "skills/cli-designer/SKILL.md",
+      "computedHash": "324a316dab138905949f2ac8bd421fe7de514d7b840fe95c563973b05694eda0"
+    },
+    "markdown-editor": {
+      "source": "gilbertotcc/agent-skills",
+      "commit": "e4a12482afdfe5fd7d2fcb47283ba49838417c0b",
+      "sourceType": "github",
+      "skillPath": "skills/markdown-editor/SKILL.md",
+      "computedHash": "dda03572ef9b4fbea63d5ecf713fd634e2c8cd70ba9a2285ed44cafa629a5e91"
+    }
+  }
+}

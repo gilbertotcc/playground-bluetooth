@@ -26,11 +26,12 @@ select = [
 lines-after-imports = 2
 
 [lint.flake8-tidy-imports.banned-api]
-# Layering: the domain (`playground_bluetooth.models`) must not depend on the implementation libraries.
+# Layering: the domain (`playground_bluetooth.models`) and the CLI (`playground_bluetooth.cli`) must not depend on
+# the implementation libraries.
 # Rule TID251 (flake8-tidy-imports banned-api, enabled by "TID" in `select`) reports any import of the modules
 # listed here, including their submodules (e.g. `from bleak.backends.device import BLEDevice`).
 # TID251 is turned off in `per-file-ignores` only where these libraries are allowed: the
-# `playground_bluetooth.infrastructure` package, its tests and the maintenance scripts.
+# `playground_bluetooth.infrastructure` package (never `models` or `cli`), its tests and the maintenance scripts.
 "bleak".msg = "Use bleak only in playground_bluetooth.infrastructure"
 "yaml".msg = "Use yaml only in playground_bluetooth.infrastructure"
 

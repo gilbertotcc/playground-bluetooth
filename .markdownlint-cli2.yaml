@@ -11,3 +11,7 @@ config:
 gitignore: true
 globs:
   - "**/*.md"
+# Skills vendored with skills.sh (see skills-lock.json); keep in sync.
+ignores:
+  - ".claude/skills/cli-designer/**"
+  - ".claude/skills/markdown-editor/**"

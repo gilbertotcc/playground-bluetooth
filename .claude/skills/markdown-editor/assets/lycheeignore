@@ -1,0 +1,5 @@
+# URL regexes that lychee skips, one per line. Put a dated comment above each
+# regex, in one of these forms:
+#
+# Reachable but fails the link check. (Last access: YYYY-MM-DD)
+# Historical reference; the URL is no longer reachable. (Last access: YYYY-MM-DD)
