@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.14"
-# dependencies = ["click", "pyyaml"]
+# dependencies = ["pyyaml"]
 # ///
 """Update the vendored Bluetooth SIG assigned numbers.
 
@@ -21,6 +21,7 @@ Exit codes:
     130  interrupted (Ctrl-C)
 """
 
+import argparse
 import os
 import sys
 import tempfile
@@ -28,7 +29,6 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-import click
 import yaml
 
 
@@ -96,60 +96,49 @@ def write_atomically(path: Path, content: bytes) -> None:
         raise
 
 
-HELP = """Update the vendored Bluetooth SIG assigned numbers.
-
-\b
-Examples:
-  uv run scripts/update_assigned_numbers.py --check
-  uv run scripts/update_assigned_numbers.py
-  uv run scripts/update_assigned_numbers.py --ref <COMMIT>
-
-Downloads the YAML files from the Bluetooth SIG repository and rewrites the
-vendored copies when they differ. With --check nothing is written.
-
-\b
-Exit codes:
-  0    up to date, or updated
-  1    outdated (with --check)
-  2    usage error
-  3    fetch or validation failure
-  130  interrupted (Ctrl-C)
-"""
+def parse_args(argv: list[str] | None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--ref", default="main", help="upstream branch, tag or commit (default: main)")
+    parser.add_argument("--check", action="store_true", help="do not write; exit 1 if any file is outdated")
+    parser.add_argument(
+        "--data-dir",
+        type=Path,
+        default=DEFAULT_DATA_DIR,
+        help="directory of the vendored files (default: package data)",
+    )
+    return parser.parse_args(argv)
 
 
-@click.command(help=HELP, context_settings={"help_option_names": ["-h", "--help"], "max_content_width": 80})
-@click.option("--ref", default="main", show_default=True, help="Upstream branch, tag or commit.")
-@click.option("--check", is_flag=True, help="Do not write; exit 1 if any file is outdated.")
-@click.option(
-    "--data-dir",
-    type=click.Path(path_type=Path, file_okay=False),
-    default=DEFAULT_DATA_DIR,
-    show_default=False,
-    help="Directory holding the vendored files. [default: the package data dir]",
-)
-def main(*, ref: str, check: bool, data_dir: Path) -> None:
+def run(args: argparse.Namespace) -> int:
+    contents = fetch_all(args.ref)
+    outdated = False
+    for name, content in contents.items():
+        path = args.data_dir / name
+        if is_up_to_date(path, content):
+            print(f"{name}: up to date")
+        elif args.check:
+            print(f"{name}: outdated")
+            outdated = True
+        else:
+            write_atomically(path, content)
+            print(f"{name}: updated")
+    return EXIT_OUTDATED if outdated else 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
     try:
-        contents = fetch_all(ref)
-        outdated = False
-        for name, content in contents.items():
-            path = data_dir / name
-            if is_up_to_date(path, content):
-                click.echo(f"{name}: up to date")
-            elif check:
-                click.echo(f"{name}: outdated")
-                outdated = True
-            else:
-                write_atomically(path, content)
-                click.echo(f"{name}: updated")
+        return run(args)
     except KeyboardInterrupt:
-        click.echo("Interrupted", err=True)
-        sys.exit(EXIT_INTERRUPTED)
+        print("Interrupted", file=sys.stderr)
+        return EXIT_INTERRUPTED
     except RuntimeError as error:
-        click.echo(f"error: {error}", err=True)
-        sys.exit(EXIT_FETCH_ERROR)
-    if outdated:
-        sys.exit(EXIT_OUTDATED)
+        print(f"error: {error}", file=sys.stderr)
+        return EXIT_FETCH_ERROR
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -90,8 +90,8 @@ CI runs these same checks on every pull request and push to `main` that touches
 Python files (see `.github/workflows/check-python.yml`).
 
 Tests must not require real Bluetooth hardware. Mock `BleakScanner` in
-infrastructure tests, and test the CLIs with `click.testing.CliRunner` and a
-fake `Scanner` passed as `obj`.
+infrastructure tests, and test the application CLI with
+`click.testing.CliRunner` and a fake `Scanner` passed as `obj`.
 
 ## Command-line interfaces
 
@@ -99,7 +99,10 @@ Design and review CLIs with the `cli-designer` skill.
 
 Project rules, which take precedence over clig.dev:
 
-* Build Python CLIs and scripts with Click.
+* Build the application CLI with Click.
+* Keep scripts in `scripts/`, which run in pipelines, on as few dependencies
+  as possible: parse arguments with `argparse`, and keep a `--help` with
+  examples and exit codes for the AI agents that run them.
 * Default human output and `--help` fit in 80 columns.
 * No `--version` option.
 * Errors go to stderr.
