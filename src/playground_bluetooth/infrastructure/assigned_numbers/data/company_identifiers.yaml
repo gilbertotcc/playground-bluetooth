@@ -1,5 +1,26 @@
 company_identifiers:
 
+  - value: 0x1153
+    name: 'Humax'
+
+  - value: 0x1152
+    name: 'LIMITED LIABILITY COMPANY “SFERA TELEMATICS”'
+
+  - value: 0x1151
+    name: 'MEIKO Maschinenbau GmbH & Co. KG'
+
+  - value: 0x1150
+    name: 'Kaz USA, Inc.'
+
+  - value: 0x114F
+    name: 'Electronic Silk Road (Shenzhen) Tech Co., Ltd'
+
+  - value: 0x114E
+    name: 'AutoStoa LLC'
+
+  - value: 0x114D
+    name: 'LightingSoft AG'
+
   - value: 0x114C
     name: 'Acin Instrumenten B.V.'
 
@@ -1771,7 +1792,7 @@ company_identifiers:
     name: 'kokoromil Inc.'
 
   - value: 0x0E96
-    name: 'Skeed,co,Ltd.'
+    name: 'SCSK Corporation'
 
   - value: 0x0E95
     name: 'Viaanix, Inc.'
